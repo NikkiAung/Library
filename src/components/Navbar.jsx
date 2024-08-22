@@ -9,7 +9,7 @@ function Navbar() {
   const handleSearch = (e) =>{
     navigate('/?search='+search);
   }
-  let {theme, changeTheme} = useTheme();
+  let {changeTheme, isDark} = useTheme();
   return (
     <div>
         <nav className={`border border-b-1`}>
@@ -51,9 +51,9 @@ function Navbar() {
                     </div>
 
                     <div className="cursor-pointer">
-                        {theme === 'dark' && <img src={lightMode} alt="light-mode-icon" 
+                        {isDark && <img src={lightMode} alt="light-mode-icon" 
                         className="w-9" onClick={()=> changeTheme('light')}/>}
-                        {theme === 'light' && <img src={darkMode} alt="dark-mode-icon "
+                        {!isDark && <img src={darkMode} alt="dark-mode-icon "
                         className="w-9" onClick={() => changeTheme('dark')}/>}
                     </div>
                 </li>
