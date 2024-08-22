@@ -8,18 +8,17 @@ function Navbar() {
   const handleSearch = (e) =>{
     navigate('/?search='+search);
   }
-  let { theme, changeTheme } = useTheme()
 
   return (
     <div>
-        <nav onClick={changeTheme} className={`border border-b-1 ${theme == 'dark' ? 'bg-blue-100' : 'bg-yellow-200'}`}>
+        <nav className={`border border-b-1`}>
             <ul className='flex justify-between items-center p-3 max-w-6xl mx-auto'>
                 <li className='flex items-center gap-3'>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                 </svg>
 
-                    <input value={search} onChange={e => setSearch(e.target.value)} type="text" placeholder='search book...' className='outline-none' />
+                    <input value={search} onChange={e => setSearch(e.target.value)} type="text" placeholder='search book...' className='outline-none px-2 py-1 rounded-lg' />
 
                     <button to="/create" onClick={handleSearch}className='text-white bg-primary px-3 py-1 rounded-2xl flex items-center gap-3'>
                         <span className='hidden md:block'>Search</span>
