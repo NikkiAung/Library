@@ -1,14 +1,15 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import useTheme from "../hooks/useTheme";
-
+import lightMode from '../assets/sunnyMode.svg'
+import darkMode from '../assets/darkMode.svg'
 function Navbar() {
   const [search, setSearch] = useState('');
   let navigate = useNavigate();
   const handleSearch = (e) =>{
     navigate('/?search='+search);
   }
-
+  let {theme, changeTheme} = useTheme();
   return (
     <div>
         <nav className={`border border-b-1`}>
@@ -49,6 +50,12 @@ function Navbar() {
                         <img src="mypfp.jpg" alt="" className='w-full rounded-full'/>
                     </div>
 
+                    <div className="cursor-pointer">
+                        {theme === 'dark' && <img src={lightMode} alt="light-mode-icon" 
+                        className="w-8" onClick={()=> changeTheme('light')}/>}
+                        {theme === 'light' && <img src={darkMode} alt="dark-mode-icon "
+                        className="w-8" onClick={() => changeTheme('dark')}/>}
+                    </div>
                 </li>
             </ul>
         </nav>
