@@ -52,9 +52,9 @@ function Navbar() {
 
                     <div className="cursor-pointer">
                         {theme === 'dark' && <img src={lightMode} alt="light-mode-icon" 
-                        className="w-8" onClick={()=> changeTheme('light')}/>}
+                        className="w-9" onClick={()=> changeTheme('light')}/>}
                         {theme === 'light' && <img src={darkMode} alt="dark-mode-icon "
-                        className="w-8" onClick={() => changeTheme('dark')}/>}
+                        className="w-9" onClick={() => changeTheme('dark')}/>}
                     </div>
                 </li>
             </ul>
