@@ -1,12 +1,32 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import useFetch from '../hooks/useFetch';
 import bookImg from '../assets/book.png';
 import useTheme from '../hooks/useTheme';
+import { db } from '../firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 export default function BookDetail() {
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [book, setBook] = useState(null);
+
     let { id } = useParams();
-    let { data: book, loading, error } = useFetch(`http://localhost:3000/books/${id}`)
+    useEffect(()=>{
+      setLoading(true);
+      let ref = doc(db, 'books', id);
+      getDoc(ref).then(doc => {
+        if(doc.exists){
+          let book = {id : doc.id,...doc.data()}
+          setBook(book);
+          setLoading(false);
+          setError('');
+        } else {
+          setError('doc not found');
+          setLoading(false);
+        }
+      })
+    }, [id])
+
 
     let { isDark } = useTheme()
 

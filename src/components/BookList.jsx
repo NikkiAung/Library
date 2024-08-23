@@ -13,16 +13,23 @@ export default function BookList() {
     useEffect(()=> {
         setLoading(true);
         let ref = collection(db, 'books');
-        let books = []
         getDocs(ref).then(docs => {
-            docs.forEach(doc => {
-                let book = {id: doc.id, ...doc.data()}
-                books.push(book);
-            })
-            setBooks(books);
-            setLoading(false);
+
+            if(docs.empty){
+                setError('docs not found');
+            }else{
+                let books = []
+                docs.forEach(doc => {
+                    let book = {id: doc.id, ...doc.data()}
+                    books.push(book);
+                })
+                setBooks(books);
+                setLoading(false);
+                setError('');
+            }
+
         })
-    })
+    },[])
   
     if (error) {
         return <p>{error}</p>
