@@ -1,26 +1,39 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import book from '../assets/book.png';
-import useFetch from '../hooks/useFetch';
 import { Link, useLocation } from 'react-router-dom';
 import useTheme from '../hooks/useTheme';
+import { db } from '../firebase';
+import { collection, getDocs } from 'firebase/firestore';
 
 export default function BookList() {
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [books, setBooks] = useState([]);
 
-    let location = useLocation();
-    let params = new URLSearchParams(location.search);
-    let search = params.get('search')
-    {console.log(search)}
-    let { data: books, loading, error } = useFetch(`http://localhost:3000/books${search ? `?q=${search}` : ''}`);
-    let { isDark } = useTheme();
+    useEffect(()=> {
+        setLoading(true);
+        let ref = collection(db, 'books');
+        let books = []
+        getDocs(ref).then(docs => {
+            docs.forEach(doc => {
+                let book = {id: doc.id, ...doc.data()}
+                books.push(book);
+            })
+            setBooks(books);
+            setLoading(false);
+        })
+    })
+  
     if (error) {
         return <p>{error}</p>
     }
+
+    let { isDark } = useTheme();
 
     return (
         <div className='h-screen'>
             {loading && <p>loading ... </p>}
             {/* book list */}
-            {console.log(books)}
             {!!books && (
                 <div className='grid grid-cols-2 md:grid-cols-4 gap-4 my-3'>
                     {books.map((b) => (
