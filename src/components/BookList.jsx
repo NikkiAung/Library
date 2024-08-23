@@ -2,6 +2,7 @@ import React from 'react'
 import book from '../assets/book.png';
 import useFetch from '../hooks/useFetch';
 import { Link, useLocation } from 'react-router-dom';
+import useTheme from '../hooks/useTheme';
 
 export default function BookList() {
 
@@ -10,13 +11,13 @@ export default function BookList() {
     let search = params.get('search')
     {console.log(search)}
     let { data: books, loading, error } = useFetch(`http://localhost:3000/books${search ? `?q=${search}` : ''}`);
-
+    let { isDark } = useTheme();
     if (error) {
         return <p>{error}</p>
     }
 
     return (
-        <div>
+        <div className='h-screen'>
             {loading && <p>loading ... </p>}
             {/* book list */}
             {console.log(books)}
@@ -24,7 +25,7 @@ export default function BookList() {
                 <div className='grid grid-cols-2 md:grid-cols-4 gap-4 my-3'>
                     {books.map((b) => (
                         <Link to={`/books/${b.id}`} key={b.id}>
-                            <div className='p-4 border border-1 min-h-[430px]'>
+                            <div className={`p-4 border border-1 min-h-[430px] ${isDark ? 'text-white bg-dcard border-primary' : ''}`}>
                                 <img src={book} alt="" />
                                 <div className='text-center space-y-2 mt-3'>
                                     <h1>{b.title}</h1>

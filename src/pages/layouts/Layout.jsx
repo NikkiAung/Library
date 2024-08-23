@@ -3,10 +3,12 @@ import { Outlet, useLocation } from 'react-router-dom'
 import Navbar from '../../components/Navbar'
 import { SwitchTransition, CSSTransition } from "react-transition-group";
 import './styles.css'
+import useTheme from '../../hooks/useTheme';
 function Layout() {
   const location = useLocation();
+  let {isDark} = useTheme()
   return (
-    <div>
+    <div className={isDark ? 'bg-dbg' : 'bg-white'}>
         <Navbar/>
 
         <SwitchTransition>
