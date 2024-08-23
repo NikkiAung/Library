@@ -3,15 +3,17 @@ import useFetch from "../hooks/useFetch";
 import { useNavigate } from "react-router-dom";
 import './index.css'
 import useTheme from "../hooks/useTheme";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { db } from "../firebase";
 
 function Create() {
   let [title, setTitle] = useState('');
   let [description, setDescription] = useState('');
   let [newCategories, setNewCategories] = useState('');
   let [categories, setCategories] = useState([]);
-  let url = 'http://localhost:3000/books';
-  let {setPostData , data : book, loading } = useFetch(url, 'POST' );
+  let [loading, setLoading] = useState(false);
   let navigate = useNavigate();
+
   const addCategory = (e) =>{
       // fixing bugs for duplicate val
       if(newCategories && categories.includes(newCategories)){  
@@ -22,23 +24,26 @@ function Create() {
       setCategories(prev => [newCategories, ...prev])
       setNewCategories('');
   }
-  const addData = (e) =>{
+  const addData = async (e) =>{
     e.preventDefault();
+    setLoading(true);
     const data = {
       title,
       description,
-      categories
+      categories,
+      date: serverTimestamp()
     }
-    setPostData(data);
+    try {
+      let ref = collection( db, 'books' );
+      await addDoc(ref,data);
+      navigate('/');
+    } catch (error){
+      console.error("Error adding document: ", error);
+    } finally {
+      setLoading(false);
+    }
   }
 
-  useEffect(()=>{
-    if(book){
-      setTimeout(()=>{
-        navigate('/')
-      },200)
-    }
-  },[book])
   let { isDark } = useTheme();
   return (
 
@@ -89,10 +94,9 @@ function Create() {
           </div>
         </div>
         {/* Create Book */}
-        {console.log(loading)}
         <button className="bg-primary w-full flex justify-center py-2 gap-1 rounded-2xl text-white items-center">
           
-          {!loading ? (
+          {loading ? (
             <>
             <svg className="animate-spin ml-0 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -113,10 +117,6 @@ function Create() {
 
           
         </button>
-
-
-
-
       </form>
     </div>
   )
