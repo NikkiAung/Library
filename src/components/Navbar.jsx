@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import useTheme from "../hooks/useTheme";
 import lightMode from '../assets/sunnyMode.svg'
 import darkMode from '../assets/darkMode.svg'
+import useLogout from "../hooks/useLogout";
 function Navbar() {
   const [search, setSearch] = useState('');
   let navigate = useNavigate();
@@ -10,6 +11,11 @@ function Navbar() {
     navigate('/?search='+search);
   }
   let {changeTheme, isDark} = useTheme();
+  let {logout} = useLogout();
+  const userLogout = async () => {
+        await logout();
+        navigate('/login');
+  }
   return (
     <div>
         <nav className={`border border-b-1 ${isDark ? 'bg-dbg border-primary' : 'bg-white'}`}>
@@ -47,7 +53,7 @@ function Navbar() {
                         <span className='hidden md:block'>Create Book</span>
                     </Link>
                     <div className='w-11'>
-                        <img src="mypfp.jpg" alt="" className='w-full rounded-full'/>
+                        <img src="mypfp.jpg" alt="profile" className='w-full rounded-full'/>
                     </div>
 
                     <div className="cursor-pointer">
@@ -56,6 +62,9 @@ function Navbar() {
                         {!isDark && <img src={darkMode} alt="dark-mode-icon "
                         className="w-9" onClick={() => changeTheme('dark')}/>}
                     </div>
+                    <button type="button" onClick={userLogout} className="bg-red-500 rounded-lg text-white py-2 px-2">
+                        Logout
+                    </button>
                 </li>
             </ul>
         </nav>
