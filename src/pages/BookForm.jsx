@@ -1,21 +1,43 @@
 import { useEffect, useState } from "react"
 import useFetch from "../hooks/useFetch";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import './index.css'
 import useTheme from "../hooks/useTheme";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { addDoc, collection, serverTimestamp, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
-function Create() {
+
+function BookForm() {
   let [title, setTitle] = useState('');
   let [description, setDescription] = useState('');
   let [newCategories, setNewCategories] = useState('');
   let [categories, setCategories] = useState([]);
   let [loading, setLoading] = useState(false);
+  let [isEdit, setEdit] = useState(false);
+  let {id} = useParams();
   let navigate = useNavigate();
 
+  useEffect(()=>{
+    if(id){
+      setEdit(true);
+      let ref = doc(db, 'books', id);
+      getDoc(ref).then(doc => {
+        if (doc.exists()) {
+          let {title, description, categories} = doc.data();
+          setTitle(title);
+          setDescription(description);
+          setCategories(categories);
+        } 
+      })
+    }else{
+      setEdit(false);
+      setTitle('');
+      setCategories('');
+      setCategories([]);
+    }
+  },[])
   const addCategory = (e) =>{
-      // fixing bugs for duplicate val
+      // fixing bugs for duplicate val and preventing empty val
       if(newCategories && categories.includes(newCategories) || newCategories.length === 0){  
         setNewCategories('');
         return;
@@ -24,7 +46,7 @@ function Create() {
       setCategories(prev => [newCategories, ...prev])
       setNewCategories('');
   }
-  const addData = async (e) =>{
+  const formSubmit = async (e) =>{
     e.preventDefault();
     setLoading(true);
     const data = {
@@ -33,22 +55,33 @@ function Create() {
       categories,
       date: serverTimestamp()
     }
-    try {
-      let ref = collection( db, 'books' );
-      await addDoc(ref,data);
-      navigate('/');
-    } catch (error){
-      console.error("Error adding document: ", error);
-    } finally {
-      setLoading(false);
+    if (isEdit) {
+      try {
+        let ref = doc(db, 'books', id);
+        await updateDoc(ref, data)
+      } catch(error) {
+        console.error("Error editing document: ", error);
+      } finally {
+        setLoading(false);
+      }
+    } else{
+      try {
+        let ref = collection( db, 'books' );
+        await addDoc(ref,data);
+      } catch (error){
+        console.error("Error adding document: ", error);
+      } finally {
+        setLoading(false);
+      }
     }
+    navigate('/');
   }
 
   let { isDark } = useTheme();
   return (
 
     <div className="h-screen">
-      <form className="w-full max-w-lg mx-auto mt-5" onSubmit={addData}>
+      <form className="w-full max-w-lg mx-auto mt-5" onSubmit={formSubmit}>
 
         {/* Book Title */}
         <div className="flex flex-wrap -mx-3 mb-6">
@@ -106,13 +139,18 @@ function Create() {
             </>
 
           ) : (
-            <>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-              </svg>
-              <span>Create Book</span>
-            </>
-
+            isEdit ? 
+                (<>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                  </svg>
+                  <span>Update Book</span>
+                </>) : (<>
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>
+                  <span>Create Book</span>
+                </>)
           )}
 
           
@@ -122,4 +160,4 @@ function Create() {
   )
 }
 
-export default Create
+export default BookForm

@@ -3,9 +3,9 @@ import book from '../assets/book.png';
 import { Link, useLocation } from 'react-router-dom';
 import useTheme from '../hooks/useTheme';
 import { db } from '../firebase';
-import { collection, deleteDoc, doc, getDocs, orderBy, query } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, onSnapshot, orderBy, query } from 'firebase/firestore';
 import trashIcon from '../assets/trash.svg'
-
+import editIcon from '../assets/edit.svg'
 export default function BookList() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -14,13 +14,12 @@ export default function BookList() {
         e.preventDefault();
         let ref = doc(db,'books',id);
         await deleteDoc(ref);
-        setBooks(prev => prev.filter(b => b.id != id));
     }
     useEffect(()=> {
         setLoading(true);
         let ref = collection(db, 'books');
         let q = query(ref, orderBy('date','desc'));
-        getDocs(q).then(docs => {
+        onSnapshot(q, docs => {
             if(docs.empty){
                 setError('docs not found');
             }else{
@@ -34,7 +33,7 @@ export default function BookList() {
                 setError('');
             }
 
-        })
+        }) 
     },[])
   
     if (error) {
@@ -57,14 +56,18 @@ export default function BookList() {
                                     <h1>{b.title}</h1>
                                     <p>{b.description}</p>
                                     {/* genres */}
-                                    <div className='flex flex-wrap justify-between'>
+                                    <div className='flex flex-wrap justify-between mt-4'>
                                         <div>
                                             {b.categories.map(c => (
                                                 <span key={c} className='mx-1 my-1 text-white rounded-full px-2 py-1 text-sm bg-blue-500'> {c}</span>
                                             ))}
                                         </div>
-                                        <div onClick={e => deleteBook(e, b.id)}>
-                                            <img src={trashIcon} alt="trash-icon" />
+                                        <div className='flex space-x-2 items-center'>
+                                            <Link to={`edit/${b.id}`}>
+                                                <img src={editIcon} alt="edit-icon"/>
+                                            </Link>
+
+                                            <img onClick={e => deleteBook(e, b.id)} src={trashIcon} alt="trash-icon" />
                                         </div>
                                     </div>
                                 </div>
