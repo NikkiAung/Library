@@ -3,13 +3,19 @@ import book from '../assets/book.png';
 import { Link, useLocation } from 'react-router-dom';
 import useTheme from '../hooks/useTheme';
 import { db } from '../firebase';
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, orderBy, query } from 'firebase/firestore';
+import trashIcon from '../assets/trash.svg'
 
 export default function BookList() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [books, setBooks] = useState([]);
-
+    const deleteBook = async (e, id) => {
+        e.preventDefault();
+        let ref = doc(db,'books',id);
+        await deleteDoc(ref);
+        setBooks(prev => prev.filter(b => b.id != id));
+    }
     useEffect(()=> {
         setLoading(true);
         let ref = collection(db, 'books');
@@ -51,10 +57,15 @@ export default function BookList() {
                                     <h1>{b.title}</h1>
                                     <p>{b.description}</p>
                                     {/* genres */}
-                                    <div className='flex flex-wrap'>
-                                        {b.categories.map(c => (
-                                            <span key={c} className='mx-1 my-1 text-white rounded-full px-2 py-1 text-sm bg-blue-500'> {c}</span>
-                                        ))}
+                                    <div className='flex flex-wrap justify-between'>
+                                        <div>
+                                            {b.categories.map(c => (
+                                                <span key={c} className='mx-1 my-1 text-white rounded-full px-2 py-1 text-sm bg-blue-500'> {c}</span>
+                                            ))}
+                                        </div>
+                                        <div onClick={e => deleteBook(e, b.id)}>
+                                            <img src={trashIcon} alt="trash-icon" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>

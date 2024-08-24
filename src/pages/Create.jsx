@@ -16,7 +16,7 @@ function Create() {
 
   const addCategory = (e) =>{
       // fixing bugs for duplicate val
-      if(newCategories && categories.includes(newCategories)){  
+      if(newCategories && categories.includes(newCategories) || newCategories.length === 0){  
         setNewCategories('');
         return;
       }
