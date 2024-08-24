@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import bookImg from '../assets/book.png';
 import useTheme from '../hooks/useTheme';
 import { db } from '../firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 
 export default function BookDetail() {
     const [error, setError] = useState('');
@@ -14,7 +14,7 @@ export default function BookDetail() {
     useEffect(()=>{
       setLoading(true);
       let ref = doc(db, 'books', id);
-      getDoc(ref).then(doc => {
+      onSnapshot(ref, doc => {
         if(doc.exists){
           let book = {id : doc.id,...doc.data()}
           setBook(book);
@@ -24,7 +24,7 @@ export default function BookDetail() {
           setError('doc not found');
           setLoading(false);
         }
-      })
+      }) 
     }, [id])
 
 
