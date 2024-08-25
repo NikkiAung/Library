@@ -1,6 +1,7 @@
 import { collection, deleteDoc, doc, onSnapshot, orderBy, query } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react'
 import { db } from '../firebase';
+import { addDoc, updateDoc } from "firebase/firestore";
 function useFirestore() {
     const getCollection = (colName) => {
         const [error, setError] = useState('');
@@ -52,8 +53,9 @@ function useFirestore() {
         return {error,loading,data}
     }
 
-    const addCollection = () => {
-        
+    const addCollection = async (colName, data) => {
+        let ref = collection( db, colName );
+        return addDoc(ref,data);
     }
 
     const deleteDocument = async (colName, id) => {
@@ -61,8 +63,9 @@ function useFirestore() {
         return deleteDoc(ref);
     }
 
-    const updateDocument = () => {
-        
+    const updateDocument = async (colName,data, id) => {
+        let ref = doc(db, colName, id);
+        return updateDoc(ref, data)
     }
     
 

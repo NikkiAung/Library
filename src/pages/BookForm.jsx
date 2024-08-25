@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
-import useFetch from "../hooks/useFetch";
 import { useNavigate, useParams } from "react-router-dom";
 import './index.css'
 import useTheme from "../hooks/useTheme";
-import { addDoc, collection, serverTimestamp, doc, getDoc, updateDoc } from "firebase/firestore";
+import { serverTimestamp, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
+import useFirestore from "../hooks/useFirestore";
 
 
 function BookForm() {
@@ -16,7 +16,7 @@ function BookForm() {
   let [isEdit, setEdit] = useState(false);
   let {id} = useParams();
   let navigate = useNavigate();
-
+  let {addCollection,updateDocument} = useFirestore();
   useEffect(()=>{
     if(id){
       setEdit(true);
@@ -57,8 +57,7 @@ function BookForm() {
     }
     if (isEdit) {
       try {
-        let ref = doc(db, 'books', id);
-        await updateDoc(ref, data)
+        await updateDocument('books',data, id)
       } catch(error) {
         console.error("Error editing document: ", error);
       } finally {
@@ -66,8 +65,7 @@ function BookForm() {
       }
     } else{
       try {
-        let ref = collection( db, 'books' );
-        await addDoc(ref,data);
+        await addCollection('books',data)
       } catch (error){
         console.error("Error adding document: ", error);
       } finally {
