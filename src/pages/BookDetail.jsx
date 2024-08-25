@@ -4,29 +4,14 @@ import bookImg from '../assets/book.png';
 import useTheme from '../hooks/useTheme';
 import { db } from '../firebase';
 import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+import useFirestore from '../hooks/useFirestore';
 
 export default function BookDetail() {
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [book, setBook] = useState(null);
+
 
     let { id } = useParams();
-    useEffect(()=>{
-      setLoading(true);
-      let ref = doc(db, 'books', id);
-      onSnapshot(ref, doc => {
-        if(doc.exists){
-          let book = {id : doc.id,...doc.data()}
-          setBook(book);
-          setLoading(false);
-          setError('');
-        } else {
-          setError('doc not found');
-          setLoading(false);
-        }
-      }) 
-    }, [id])
-
+    const {getDocument} = useFirestore();
+    let {error,loading,data : book} = getDocument('books', id);
 
     let { isDark } = useTheme()
 

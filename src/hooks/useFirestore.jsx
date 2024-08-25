@@ -30,8 +30,26 @@ function useFirestore() {
         return { error, loading, data }
     }
 
-    const getDocument = () => {
-
+    const getDocument = (colName, id) => {
+        const [error, setError] = useState('');
+        const [loading, setLoading] = useState(false);
+        const [data, setData] = useState(null);
+        useEffect(()=>{
+            setLoading(true);
+            let ref = doc(db, colName, id);
+            onSnapshot(ref, doc => {
+              if(doc.exists){
+                let book = {id : doc.id,...doc.data()}
+                setData(book);
+                setLoading(false);
+                setError('');
+              } else {
+                setError('doc not found');
+                setLoading(false);
+              }
+            });
+          }, [id]);
+        return {error,loading,data}
     }
 
     const addCollection = () => {
