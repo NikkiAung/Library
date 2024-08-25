@@ -4,9 +4,12 @@ import useTheme from "../hooks/useTheme";
 import lightMode from '../assets/sunnyMode.svg'
 import darkMode from '../assets/darkMode.svg'
 import useLogout from "../hooks/useLogout";
+import { AuthContext } from "../contexts/AuthContextProvider";
 function Navbar() {
   const [search, setSearch] = useState('');
   let navigate = useNavigate();
+  let {user} = useContext(AuthContext);
+  console.log(user);
   const handleSearch = (e) =>{
     navigate('/?search='+search);
   }
@@ -62,9 +65,25 @@ function Navbar() {
                         {!isDark && <img src={darkMode} alt="dark-mode-icon "
                         className="w-9" onClick={() => changeTheme('dark')}/>}
                     </div>
-                    <button type="button" onClick={userLogout} className="bg-red-500 rounded-lg text-white py-2 px-2">
-                        Logout
-                    </button>
+                    <div className="space-x-2 items-center">
+                        {!user &&
+                        <>
+                            <Link to={`/login`} type="button" className={`border-2 border-primary rounded-lg py-2 px-2 text-center text-sm ${isDark ? 'text-white':''}`}>
+                                Login
+                            </Link>
+                            <Link to={`/register`} type="button" className="bg-primary rounded-lg text-white text-sm py-2 px-2">
+                                Register
+                            </Link>
+                        </>
+                        
+                        }
+                        {!!user &&
+                            <button type="button" onClick={userLogout} className="bg-red-500 rounded-lg text-white text-sm py-1.5 px-2">
+                                Logout
+                        </button>
+
+                        }
+                    </div>
                 </li>
             </ul>
         </nav>
