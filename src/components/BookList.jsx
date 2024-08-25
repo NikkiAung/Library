@@ -6,37 +6,20 @@ import { db } from '../firebase';
 import { collection, deleteDoc, doc, onSnapshot, orderBy, query } from 'firebase/firestore';
 import trashIcon from '../assets/trash.svg';
 import editIcon from '../assets/edit.svg';
+import useFirestore from '../hooks/useFirestore';
 
 export default function BookList() {
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [books, setBooks] = useState([]);
 
+    const {getCollection} = useFirestore();
+
+    const { error, loading, data : books} = getCollection('books');
     const deleteBook = async (e, id) => {
         e.preventDefault();
         let ref = doc(db, 'books', id);
         await deleteDoc(ref);
     };
 
-    useEffect(() => {
-        setLoading(true);
-        let ref = collection(db, 'books');
-        let q = query(ref, orderBy('date', 'desc'));
-        onSnapshot(q, docs => {
-            if (docs.empty) {
-                setError('No documents found');
-            } else {
-                let books = [];
-                docs.forEach(doc => {
-                    let book = { id: doc.id, ...doc.data() };
-                    books.push(book);
-                });
-                setBooks(books);
-                setLoading(false);
-                setError('');
-            }
-        });
-    }, []);
+   
 
     if (error) {
         return <p>{error}</p>;
