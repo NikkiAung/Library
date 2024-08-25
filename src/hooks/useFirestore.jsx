@@ -53,11 +53,12 @@ function useFirestore() {
     }
 
     const addCollection = () => {
-
+        
     }
 
-    const deleteDocument = () => {
-
+    const deleteDocument = async (colName, id) => {
+        let ref = doc(db, colName , id);
+        return deleteDoc(ref);
     }
 
     const updateDocument = () => {

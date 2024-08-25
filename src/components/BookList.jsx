@@ -10,13 +10,12 @@ import useFirestore from '../hooks/useFirestore';
 
 export default function BookList() {
 
-    const {getCollection} = useFirestore();
+    const {getCollection,deleteDocument} = useFirestore();
 
     const { error, loading, data : books} = getCollection('books');
     const deleteBook = async (e, id) => {
         e.preventDefault();
-        let ref = doc(db, 'books', id);
-        await deleteDoc(ref);
+        await deleteDocument('books', id);
     };
 
    

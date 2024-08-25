@@ -8,7 +8,6 @@ import useFirestore from '../hooks/useFirestore';
 
 export default function BookDetail() {
 
-
     let { id } = useParams();
     const {getDocument} = useFirestore();
     let {error,loading,data : book} = getDocument('books', id);
