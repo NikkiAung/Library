@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom";
 import './index.css'
 import useTheme from "../hooks/useTheme";
 import { serverTimestamp, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import useFirestore from "../hooks/useFirestore";
+import { AuthContext } from "../contexts/AuthContextProvider";
 
 
 function BookForm() {
@@ -46,6 +47,7 @@ function BookForm() {
       setCategories(prev => [newCategories, ...prev])
       setNewCategories('');
   }
+  let {user} = useContext(AuthContext);
   const formSubmit = async (e) =>{
     e.preventDefault();
     setLoading(true);
@@ -53,7 +55,8 @@ function BookForm() {
       title,
       description,
       categories,
-      date: serverTimestamp()
+      date: serverTimestamp(),
+      uid: user.uid
     }
     if (isEdit) {
       try {

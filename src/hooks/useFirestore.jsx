@@ -1,17 +1,24 @@
 import { collection, deleteDoc, doc, onSnapshot, orderBy, query } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
+import { where } from 'firebase/firestore';
 import { db } from '../firebase';
 import { addDoc, updateDoc } from "firebase/firestore";
 function useFirestore() {
-    const getCollection = (colName) => {
+    const getCollection = (colName, _q) => {
         const [error, setError] = useState('');
         const [loading, setLoading] = useState(false);
         const [data, setData] = useState([]);
-
+        let qRef = useRef(_q).current;
         useEffect(() => {
             setLoading(true);
             let ref = collection(db, colName);
-            let q = query(ref, orderBy('date', 'desc'));
+            // let q = query(ref, orderBy('date', 'desc'));
+            let queries = [];
+            if(qRef){
+                queries.push(where(...qRef));
+            }
+            queries.push(orderBy('date', 'desc'));
+            let q = query(ref, ...queries);
             onSnapshot(q, docs => {
                 if (docs.empty) {
                     setError('No documents found');
@@ -26,7 +33,7 @@ function useFirestore() {
                     setError('');
                 }
             });
-        }, []);
+        }, [qRef]);
 
         return { error, loading, data }
     }
