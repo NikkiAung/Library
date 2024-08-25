@@ -18,6 +18,8 @@ function BookForm() {
   let {id} = useParams();
   let navigate = useNavigate();
   let {addCollection,updateDocument} = useFirestore();
+  let [file, setFile] = useState('');
+  let [preview, setPreview] = useState('');
   useEffect(()=>{
     if(id){
       setEdit(true);
@@ -79,6 +81,23 @@ function BookForm() {
   }
 
   let { isDark } = useTheme();
+
+  let handleFile = (e) => {
+    setFile(e.target.files[0]);
+  }
+  let handleFileInput = (file) => {
+    let reader = new FileReader;
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      setPreview(reader.result);
+    }
+
+  }
+  useEffect(()=> {
+    if(file) {
+      handleFileInput(file)
+    }
+  },[file])
   return (
 
     <div className="h-screen">
@@ -127,6 +146,18 @@ function BookForm() {
             </div>
           </div>
         </div>
+
+        {/* File Upload */}
+        <div className="flex flex-wrap -mx-3 mb-6">
+          <div className="w-full px-3">
+            <label className={`block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2 ${isDark ? 'text-white': ''}`} htmlFor="grid-password">
+              Book Image Upload
+            </label>
+            <input type="file" name="" id="" onChange={handleFile} />
+            {!!preview && <img src={preview} alt="preview" className="my-3" width={500} height={500}/> }
+          </div>
+        </div>
+
         {/* Create Book */}
         <button className="bg-primary w-full flex justify-center py-2 gap-1 rounded-2xl text-white items-center">
           
