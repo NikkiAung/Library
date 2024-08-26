@@ -35,7 +35,7 @@ export default function BookList() {
                     {books.map((b) => (
                         <Link to={`/books/${b.id}`} key={b.id}>
                             <div className={`p-4 border border-1 rounded-lg shadow-md min-h-[430px] ${isDark ? 'text-white bg-gray-800 border-gray-700' : 'bg-white'}`}>
-                                <img src={book} alt="Book" className="w-full h-64 object-cover rounded-lg" />
+                                <img src={b.cover} alt="Book" className="w-full h-64 object-cover rounded-lg" />
                                 <div className='text-center space-y-3 mt-4'>
                                     <h1 className='text-lg font-semibold'>{b.title}</h1>
                                     <p className='text-gray-600'>{b.description}</p>

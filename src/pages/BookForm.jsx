@@ -3,9 +3,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import './index.css'
 import useTheme from "../hooks/useTheme";
 import { serverTimestamp, doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { db, storage } from "../firebase";
 import useFirestore from "../hooks/useFirestore";
 import { AuthContext } from "../contexts/AuthContextProvider";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 
 function BookForm() {
@@ -20,6 +21,7 @@ function BookForm() {
   let {addCollection,updateDocument} = useFirestore();
   let [file, setFile] = useState('');
   let [preview, setPreview] = useState('');
+  let {user} = useContext(AuthContext);
   useEffect(()=>{
     if(id){
       setEdit(true);
@@ -49,16 +51,24 @@ function BookForm() {
       setCategories(prev => [newCategories, ...prev])
       setNewCategories('');
   }
-  let {user} = useContext(AuthContext);
+  const uploadToFirebase = async (file) => {
+    let uniqueFileName = Date.now().toString + "_" + file.name;
+    let path = '/covers/' + user.uid + uniqueFileName;
+    let storageRef = ref(storage, path);
+    await uploadBytes(storageRef, file);
+    return await getDownloadURL(storageRef);
+  }
   const formSubmit = async (e) =>{
     e.preventDefault();
+    let url = await uploadToFirebase(file);
     setLoading(true);
     const data = {
       title,
       description,
       categories,
       date: serverTimestamp(),
-      uid: user.uid
+      uid: user.uid,
+      cover: url
     }
     if (isEdit) {
       try {
@@ -86,6 +96,7 @@ function BookForm() {
     setFile(e.target.files[0]);
   }
   let handleFileInput = (file) => {
+    // console.log(file);
     let reader = new FileReader;
     reader.readAsDataURL(file);
     reader.onload = () => {
