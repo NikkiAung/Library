@@ -5,6 +5,7 @@ import lightMode from '../assets/sunnyMode.svg'
 import darkMode from '../assets/darkMode.svg'
 import useLogout from "../hooks/useLogout";
 import { AuthContext } from "../contexts/AuthContextProvider";
+import mypfp from '../assets/mypfp.jpg'
 function Navbar() {
   const [search, setSearch] = useState('');
   let navigate = useNavigate();
@@ -56,7 +57,7 @@ function Navbar() {
                         <span className='hidden md:block'>Create Book</span>
                     </Link>
                     <div className='w-11'>
-                        <img src="mypfp.jpg" alt="profile" className='w-full rounded-full'/>
+                        <img src={mypfp} alt="profile" className='w-full rounded-full'/>
                     </div>
 
                     <div className="cursor-pointer">
