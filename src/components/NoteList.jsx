@@ -1,13 +1,16 @@
 import mypfp from '../assets/mypfp.jpg'
-import React from 'react'
+import React, { useState } from 'react'
 import useFirestore from '../hooks/useFirestore';
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
 import trashIcon from '../assets/trash.svg'
 import { Firestore } from 'firebase/firestore';
+import editIcon from '../assets/edit.svg'
+import NoteForm from './NoteForm';
 export default function NoteList() {
     let { id } = useParams();
     let { getCollection,deleteDocument } = useFirestore();
+    let [ editNote, setEditNote ] = useState(null);
     console.log('hello');
     let { error, loading, data: notes} = getCollection('notes', ['bookUid', '==', id]);
     const deleteNote = async (id) => {
@@ -26,11 +29,13 @@ export default function NoteList() {
                             </div>
                         </div>
                         <div>
+                            <img className='cursor-pointer' onClick={() => setEditNote(note)} src={editIcon} alt="edit" />
                             <img className='cursor-pointer' onClick={() => deleteNote(note.id)} src={trashIcon} alt="trash" />
                         </div>
                     </div>
                     <div className='mt-3'>
-                        {note.body}
+                        {editNote?.id !== note.id && note.body}
+                        { editNote?.id == note.id && <NoteForm type ="Update" setEditNote={setEditNote} editNote={editNote} />}
                     </div>
                 </div >
             ))
