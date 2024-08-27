@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { where } from 'firebase/firestore';
 import { db } from '../firebase';
 import { addDoc, updateDoc } from "firebase/firestore";
+import { serverTimestamp } from 'firebase/firestore';
 function useFirestore() {
     const getCollection = (colName, _q) => {
         const [error, setError] = useState('');
@@ -60,10 +61,23 @@ function useFirestore() {
         return {error,loading,data}
     }
 
-    const addCollection = async (colName, data) => {
-        let ref = collection( db, colName );
-        return addDoc(ref,data);
+    // const addCollection = async (colName, data) => {
+    //     let [loading, setLoading] = useState(false);
+    //     data.date = serverTimestamp();
+    //     let ref = collection( db, colName );
+    //     dataAdded = await addDoc(ref,data);
+    //     setLoading(true);
+    //     return {loading, dataAdded}
+    // }
+    const addCollection = async (colName, data, setLoading) => {
+        setLoading(true);
+        data.date = serverTimestamp();
+        const ref = collection(db, colName);
+        const dataAdded = await addDoc(ref, data);
+        setLoading(false);
+        return dataAdded;
     }
+    
 
     const deleteDocument = async (colName, id) => {
         let ref = doc(db, colName , id);

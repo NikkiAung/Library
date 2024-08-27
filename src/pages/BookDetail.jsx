@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import bookImg from '../assets/book.png';
 import useTheme from '../hooks/useTheme';
-import { db } from '../firebase';
-import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import useFirestore from '../hooks/useFirestore';
-import mypfp from '../assets/mypfp.jpg'
+
 import NoteForm from '../components/NoteForm';
+import NoteList from '../components/NoteList';
 export default function BookDetail() {
 
     let { id } = useParams();
@@ -39,18 +37,7 @@ export default function BookDetail() {
                     <div>
                         <h1 className='text-primary text-center py-3 font-bold text-2xl'>My Note</h1>
                         <NoteForm/>
-                        <div className='mt-3 shadow-md p-4 bg-gray-100'>
-                            <div className='flex items-center'>
-                                <img src={mypfp} alt="profile" className='mr-3 w-10 h-10 rounded-full'/>
-                                <div>
-                                    <h3>Nikki</h3>
-                                    <div className='text-gray-400'>20.6.2024</div>
-                                </div>
-                            </div>
-                            <div className='mt-3'>
-                                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Accusamus et consequuntur, tempora iste a voluptas vero fugiat quia, exercitationem, error eius. Dolore, quibusdam iusto voluptatibus provident itaque perspiciatis ad doloribus!
-                            </div>
-                        </div>
+                        <NoteList/>
                     </div>
 
                 </>
