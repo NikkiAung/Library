@@ -96,7 +96,6 @@ function BookForm() {
     setFile(e.target.files[0]);
   }
   let handleFileInput = (file) => {
-    // console.log(file);
     let reader = new FileReader;
     reader.readAsDataURL(file);
     reader.onload = () => {
