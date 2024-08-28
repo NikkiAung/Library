@@ -6,11 +6,9 @@ import useFirestore from '../hooks/useFirestore';
 import NoteForm from '../components/NoteForm';
 import NoteList from '../components/NoteList';
 export default function BookDetail() {
-
     let { id } = useParams();
     const {getDocument} = useFirestore();
     let {error,loading,data : book} = getDocument('books', id);
-
     let { isDark } = useTheme()
     return (
         <>

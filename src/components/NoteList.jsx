@@ -4,7 +4,6 @@ import useFirestore from '../hooks/useFirestore';
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
 import trashIcon from '../assets/trash.svg'
-import { Firestore } from 'firebase/firestore';
 import editIcon from '../assets/edit.svg'
 import NoteForm from './NoteForm';
 export default function NoteList() {
@@ -28,7 +27,7 @@ export default function NoteList() {
                                 <div className='text-gray-400'>{moment(note?.date?.seconds * 1000).fromNow()}</div>
                             </div>
                         </div>
-                        <div>
+                        <div className='space-y-2'>
                             <img className='cursor-pointer' onClick={() => setEditNote(note)} src={editIcon} alt="edit" />
                             <img className='cursor-pointer' onClick={() => deleteNote(note.id)} src={trashIcon} alt="trash" />
                         </div>

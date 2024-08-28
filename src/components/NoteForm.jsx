@@ -5,25 +5,32 @@ import useFirestore from '../hooks/useFirestore';
 export default function NoteForm({type = 'Create', setEditNote, editNote}) {
   let {id} = useParams();
   let [body, setBody] = useState('');
-  let {addCollection} = useFirestore();
+  let {addCollection, updateDocument} = useFirestore();
   let [loading, setLoading] = useState(false);
   useEffect(()=> {
     if (type === 'Update') {
       setBody(editNote.body);
     }
   }, [type])
-  let addNote = async (e) => {
+  let submitNote = async (e) => {
     e.preventDefault();
-    let data = { 
-        body, 
-        bookUid: id
+    if (type == "Create") {
+        let data = { 
+          body, 
+          bookUid: id
+      }
+      await addCollection('notes', data, setLoading);
+    } else {
+      editNote.body = body;
+      await updateDocument('notes', editNote, editNote.id, false);
+      setEditNote(null);
     }
-    await addCollection('notes', data, setLoading);
+
 
     setBody('');
   }
   return (
-    <form onSubmit={addNote}>
+    <form onSubmit={submitNote}>
         <textarea value={body} onChange={e => setBody(e.target.value)} className='p-3 bg-gray-50 w-full shadow-md' name="" id="" cols="30" rows="5"></textarea>
         <div className='flex space-x-3'>
           <button className='text-white bg-primary px-3 py-2 my-2 rounded-2xl flex items-center gap-3' type='submit' disabled={!body.trim()}>

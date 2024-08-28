@@ -84,7 +84,10 @@ function useFirestore() {
         return deleteDoc(ref);
     }
 
-    const updateDocument = async (colName,data, id) => {
+    const updateDocument = async (colName,data, id, updateDate=true) => {
+        if(updateDate){
+        data.date = serverTimestamp();
+        }
         let ref = doc(db, colName, id);
         return updateDoc(ref, data)
     }
