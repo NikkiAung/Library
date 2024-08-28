@@ -80,7 +80,7 @@ function BookForm() {
       }
     } else{
       try {
-        await addCollection('books',data)
+        await addCollection('books',data,setLoading)
       } catch (error){
         console.error("Error adding document: ", error);
       } finally {
