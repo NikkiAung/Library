@@ -13,8 +13,13 @@ export default function NoteList() {
     console.log('hello');
     let { error, loading, data: notes} = getCollection('notes', ['bookUid', '==', id]);
     const deleteNote = async (id) => {
+        
         await deleteDocument('notes',id);
+        
     }
+    // if (error) {
+    //     return <p>{error}</p>;
+    // }
     return (
         !!notes.length && (
             notes.map(note => (

@@ -6,6 +6,7 @@ import { addDoc, updateDoc } from "firebase/firestore";
 import { serverTimestamp } from 'firebase/firestore';
 function useFirestore() {
     const getCollection = (colName, _q) => {
+        console.log('getCollection');
         const [error, setError] = useState('');
         const [loading, setLoading] = useState(false);
         const [data, setData] = useState([]);
@@ -21,8 +22,10 @@ function useFirestore() {
             queries.push(orderBy('date', 'desc'));
             let q = query(ref, ...queries);
             onSnapshot(q, docs => {
+                console.log(docs);
                 if (docs.empty) {
                     setError('No documents found');
+                    setData([]);
                 } else {
                     let books = [];
                     docs.forEach(doc => {

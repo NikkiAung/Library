@@ -52,8 +52,8 @@ function BookForm() {
       setNewCategories('');
   }
   const uploadToFirebase = async (file) => {
-    let uniqueFileName = Date.now().toString + "_" + file.name;
-    let path = '/covers/' + user.uid + uniqueFileName;
+    let uniqueFileName = Date.now().toString() + "_" + file.name;
+    let path = '/covers/' + user.uid + "/" + uniqueFileName;
     let storageRef = ref(storage, path);
     await uploadBytes(storageRef, file);
     return await getDownloadURL(storageRef);
