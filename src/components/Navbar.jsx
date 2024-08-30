@@ -1,5 +1,5 @@
 import { useContext, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import useTheme from "../hooks/useTheme";
 import lightMode from '../assets/sunnyMode.svg'
 import darkMode from '../assets/darkMode.svg'
@@ -7,7 +7,10 @@ import useLogout from "../hooks/useLogout";
 import { AuthContext } from "../contexts/AuthContextProvider";
 import mypfp from '../assets/mypfp.jpg'
 function Navbar() {
-  const [search, setSearch] = useState('');
+  let location = useLocation();
+  let param = new URLSearchParams(location.search);
+  let searchVal = param.get('search')
+  const [search, setSearch] = useState(searchVal);
   let navigate = useNavigate();
   let {user} = useContext(AuthContext);
   console.log(user);

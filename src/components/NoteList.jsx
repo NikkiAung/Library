@@ -10,7 +10,6 @@ export default function NoteList() {
     let { id } = useParams();
     let { getCollection,deleteDocument } = useFirestore();
     let [ editNote, setEditNote ] = useState(null);
-    console.log('hello');
     let { error, loading, data: notes} = getCollection('notes', ['bookUid', '==', id]);
     const deleteNote = async (id) => {
         

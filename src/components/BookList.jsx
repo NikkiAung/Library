@@ -1,9 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
-import book from '../assets/book.png';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useTheme from '../hooks/useTheme';
-import { db } from '../firebase';
-import { collection, deleteDoc, doc, onSnapshot, orderBy, query } from 'firebase/firestore';
 import trashIcon from '../assets/trash.svg';
 import editIcon from '../assets/edit.svg';
 import useFirestore from '../hooks/useFirestore';
@@ -13,14 +10,22 @@ export default function BookList() {
 
     const {getCollection,deleteDocument} = useFirestore();
     let {user} = useContext(AuthContext);
-    const { error, loading, data : books} = getCollection('books', ['uid','==',user.uid]);
+    let location = useLocation();
+    let navigate = useNavigate();
+
+    let params = new URLSearchParams(location.search)
+
+    let search = params.get('search')
+
+    const { error, loading, data : books} = getCollection('books', ['uid','==',user.uid], {
+        field: 'title',
+        value: search
+    });
     const deleteBook = async (e, id) => {
         e.preventDefault();
         await deleteDocument('books', id);
     };
-
-   
-
+    console.log(books);
     if (error) {
         return <p>{error}</p>;
     }
@@ -31,6 +36,7 @@ export default function BookList() {
         <div className='h-screen'>
             {loading && <p>Loading ... </p>}
             {!!books && (
+               
                 <div className='grid grid-cols-2 md:grid-cols-4 gap-6 my-5'>
                     {books.map((b) => (
                         <Link to={`/books/${b.id}`} key={b.id}>
@@ -52,10 +58,14 @@ export default function BookList() {
                                         </div>
 
                                         {/* Action Icons */}
+                                        {/* to={`edit/${b.id}`}  */}
                                         <div className='flex space-x-4 items-start flex-shrink-0'>
-                                            <Link to={`edit/${b.id}`} className='text-blue-500 hover:text-blue-700 transition duration-300' title="Edit Book">
-                                                <img src={editIcon} alt="Edit" className="w-6 h-6 flex-shrink-0" />
-                                            </Link>
+                                                <img onClick={(e) => {
+                                                    e.preventDefault();
+                                                    navigate(`/edit/${b.id}`)
+                                                }
+                                                } src={editIcon} alt="Edit" className="w-6 h-6 flex-shrink-0" />
+
                                             <button onClick={e => deleteBook(e, b.id)} className='text-red-500 hover:text-red-700 transition duration-300' title="Delete Book">
                                                 <img src={trashIcon} alt="Delete" className="w-6 h-6 flex-shrink-0" />
                                             </button>

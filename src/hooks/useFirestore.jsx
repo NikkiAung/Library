@@ -5,13 +5,13 @@ import { db } from '../firebase';
 import { addDoc, updateDoc } from "firebase/firestore";
 import { serverTimestamp } from 'firebase/firestore';
 function useFirestore() {
-    const getCollection = (colName, _q) => {
-        console.log('getCollection');
+    const getCollection = (colName, _q, search) => {
         const [error, setError] = useState('');
         const [loading, setLoading] = useState(false);
         const [data, setData] = useState([]);
         let qRef = useRef(_q).current;
         useEffect(() => {
+            console.log('getCollection')
             setLoading(true);
             let ref = collection(db, colName);
             // let q = query(ref, orderBy('date', 'desc'));
@@ -22,22 +22,34 @@ function useFirestore() {
             queries.push(orderBy('date', 'desc'));
             let q = query(ref, ...queries);
             onSnapshot(q, docs => {
-                console.log(docs);
+                console.log('onSnapGetCollect');
                 if (docs.empty) {
+                    console.log('empty');
                     setError('No documents found');
                     setData([]);
                 } else {
+                    console.log('not empty');
                     let books = [];
                     docs.forEach(doc => {
                         let book = { id: doc.id, ...doc.data() };
                         books.push(book);
                     });
-                    setData(books);
+        
+                    if(search?.field && search?.value) {
+                        let searchDatas =  books.filter(book =>{
+                            return book[search?.field].includes(search?.value);
+                        })
+                        setData(searchDatas);
+                    }else{
+                        setData(books);
+                    }
+
+
                     setLoading(false);
                     setError('');
                 }
             });
-        }, [qRef]);
+        }, [qRef, search?.field, search?.value]);
 
         return { error, loading, data }
     }
