@@ -1,7 +1,3 @@
-Sure! Here’s the plain text version of the generated README file for easy copy and paste:
-
----
-
 # Library Project
 
 This is a library management system built using React and Firebase. The application allows users to upload and retrieve book covers from Firebase Storage while storing metadata in Firestore. It also enables users to manage and track library items efficiently. The project emphasizes authentication, Firebase integration, and a smooth user interface.
